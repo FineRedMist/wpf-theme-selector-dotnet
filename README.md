@@ -33,7 +33,7 @@ Using the themes is pretty easy, all we need to do is merge one of the resource 
 
 And now, the window looks like that:
 
-
+![Image5](Documentation/Resources/screen5.png "Image 5")
 
 Pretty neat, huh? OK, that's good, but what if we want to change the theme to the red one? We have to go in the XAML code, change the source of the merged resource dictionary and recompile. No way! We should be able to come up with something nicer.
 
@@ -41,33 +41,92 @@ Well, there's a solution. See, everytime when the resources of a framework eleme
 
 It sounds a bit complicated, right? First, search for the right resource dictionary, then remove it from the list of merged dictionaries, then load the new one, and apply it. Yes but what if it could be done jyst by setting one single value to one signle property, and all is OK?
 
-The ThemeSelector class
+## The ThemeSelector class
 
 So there is it. The solution. I created a class which has an attachable property - the URI path to the desired theme dictionary. Now, let's think about finding the right dictionary to be removed when themes are being switched. Kinda obvious solution is a new class that inherits ResourceDictionary. Then, we search all merged dictionaries and remove those which are of this new type. Pretty simple, right? Here's the class: public class ThemeResourceDictionary : ResourceDictionary { }
 
-So it's time to see the real deal. public class MkThemeSelector : DependencyObject { public static readonly DependencyProperty CurrentThemeDictionaryProperty = DependencyProperty.RegisterAttached("CurrentThemeDictionary", typeof(Uri), typeof(MkThemeSelector), new UIPropertyMetadata(null, CurrentThemeDictionaryChanged)); public static Uri GetCurrentThemeDictionary(DependencyObject obj) { return (Uri)obj.GetValue(CurrentThemeDictionaryProperty); } public static void SetCurrentThemeDictionary(DependencyObject obj, Uri value) { obj.SetValue(CurrentThemeDictionaryProperty, value); } private static void CurrentThemeDictionaryChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e) { if (obj is FrameworkElement) // works only on FrameworkElement objects { ApplyTheme(obj as FrameworkElement, GetCurrentThemeDictionary(obj)); } } private static void ApplyTheme(FrameworkElement targetElement, Uri dictionaryUri) { if (targetElement == null) return; try { ThemeResourceDictionary themeDictionary = null; if (dictionaryUri != null) { themeDictionary = new ThemeResourceDictionary(); themeDictionary.Source = dictionaryUri; // add the new dictionary to the collection of merged dictionaries of the target object targetElement.Resources.MergedDictionaries.Insert(0, themeDictionary); } // find if the target element already has a theme applied List existingDictionaries = (from dictionary in targetElement.Resources.MergedDictionaries.OfType() select dictionary).ToList(); // remove the existing dictionaries foreach (ThemeResourceDictionary thDictionary in existingDictionaries) { if (themeDictionary == thDictionary) continue; // don't remove the newly added dictionary targetElement.Resources.MergedDictionaries.Remove(thDictionary); } } finally { } } }
+So it's time to see the real deal. 
+
+```
+public class MkThemeSelector : DependencyObject 
+{ 
+    public static readonly DependencyProperty CurrentThemeDictionaryProperty = DependencyProperty.RegisterAttached("CurrentThemeDictionary", typeof(Uri), typeof(MkThemeSelector), new UIPropertyMetadata(null, CurrentThemeDictionaryChanged)); 
+    
+    public static Uri GetCurrentThemeDictionary(DependencyObject obj) { return (Uri)obj.GetValue(CurrentThemeDictionaryProperty); } 
+    public static void SetCurrentThemeDictionary(DependencyObject obj, Uri value) { obj.SetValue(CurrentThemeDictionaryProperty, value); } 
+    
+    private static void CurrentThemeDictionaryChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e) 
+    {
+        if (obj is FrameworkElement) // works only on FrameworkElement objects 
+        {
+            ApplyTheme(obj as FrameworkElement, GetCurrentThemeDictionary(obj));
+        }
+    }
+    
+    private static void ApplyTheme(FrameworkElement targetElement, Uri dictionaryUri) 
+    {
+        if (targetElement == null)
+            return;
+        try
+        {
+            ThemeResourceDictionary themeDictionary = null;
+            if (dictionaryUri != null)
+            {
+                themeDictionary = new ThemeResourceDictionary();
+                themeDictionary.Source = dictionaryUri; // add the new dictionary to the collection of merged dictionaries of the target object 
+                targetElement.Resources.MergedDictionaries.Insert(0, themeDictionary); 
+            }
+            // find if the target element already has a theme applied 
+            List existingDictionaries = (from dictionary in targetElement.Resources.MergedDictionaries.OfType() select dictionary).ToList();
+            
+            // remove the existing dictionaries
+            foreach (ThemeResourceDictionary thDictionary in existingDictionaries) 
+            {
+                if (themeDictionary == thDictionary)
+                    continue; // don't remove the newly added dictionary 
+                targetElement.Resources.MergedDictionaries.Remove(thDictionary); 
+            }
+        } 
+        finally 
+        {
+        }
+    }
+}
+```
 
 As I said, the class as one dependency property and an callback method to handle the event of changing the value of this property. There everything is straight-forward. First, the new theme dictionary is loaded, and then the old one is removed. That's it.
 
-Using the ThemeSelector class
+## Using the ThemeSelector class
 
-Here comes the nice part. The usage of the class is as simple as changing the value of one single property. private void ChangeToRedTheme() { MkThemeSelector.SetCurrentThemeDictionary(this, new Uri("/ThemeSelector;component/Themes/ShinyRed.xaml", UriKind.Relative)); }
+Here comes the nice part. The usage of the class is as simple as changing the value of one single property. 
+
+```
+private void ChangeToRedTheme()
+{
+    MkThemeSelector.SetCurrentThemeDictionary(this, new Uri("/ThemeSelector;component/Themes/ShinyRed.xaml", UriKind.Relative));
+}
+```
 
 When this method is called, the theme changes:
 
+![Image8](Documentation/Resources/screen8.png "Image 8")
 
-
-The ThemeSelector class and WPF data binding
+## The ThemeSelector class and WPF data binding
 
 We can even use databinding to change the themes dynamically. Let's assume that we have a combo box which have two items - the red theme, and the blue theme:
 
+![Image6](Documentation/Resources/screen6.png "Image 6")
 
+Now, on the element to which we want to apply the theme, for example the root grid in the window, we set the following binding expression: 
 
-Now, on the element to which we want to apply the theme, for example the root grid in the window, we set the following binding expression: local:MkThemeSelector.CurrentThemeDictionary="{Binding ElementName=cmbThemes, Path=SelectedItem.Tag}"
+```
+local:MkThemeSelector.CurrentThemeDictionary="{Binding ElementName=cmbThemes, Path=SelectedItem.Tag}"
+```
 
 So it looks like this:
 
-
+![Image7](Documentation/Resources/screen7.png "Image 7")
 
 And that's all. When we run the application, we have this combo box, allowing us to select the theme in runtime.
 
+![Image9](Documentation/Resources/screen9.png "Image 9")
