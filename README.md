@@ -1,4 +1,4 @@
-From http://svetoslavsavov.blogspot.ca/2009/07/switching-wpf-interface-themes-at.html
+From http://svetoslavsavov.blogspot.ca/2009/07/switching-wpf-interface-themes-at.html (converted to markdown).
 
 # Switching WPF interface themes at runtime
 
@@ -20,8 +20,8 @@ And that's it. WPF searches for a resource with the given key and applies it whe
 
 As I said, dynamic resources are applied at runtime, that means they can be changed. Let's assume that we have defined several resources like brushes and styles, and we want them to be in two variants - for example a red theme and a blue theme for user interfaces. We put all of the resources for each theme in a different resource dictionary file. For this example, I use the WPF Themes which can be found here: http://wpf.codeplex.com/Wiki/View.aspx?title=WPF%20Themes. So, assume that we have two resource dictionaries: 
 
-_ShinyBlue.xaml_
-_ShinyRed.xaml_
+* ShinyBlue.xaml
+* ShinyRed.xaml
 
 Without these themes, a WPF window should look something like this:
 
@@ -39,21 +39,36 @@ Pretty neat, huh? OK, that's good, but what if we want to change the theme to th
 
 Well, there's a solution. See, everytime when the resources of a framework element are changed (added or removed resources), WPF goes through all elements with dynamic resource references and updates them accordingly. So the solution should be obvious - when we need to change the theme, we can simply remove the old merged dictionary, and add the new one. I searched a bit in the internet, and the most common solution is to clear all merged dictionaries from the collection and then add the desired one. Yes, allright, that would work. But what if the developer has added more than one resource dictionary, not only the one with the theme resources? Everything goes away, and bang, the software is not working. So there should be a proper way of detecting which resource dictionary contains the theme resources, and leave the other dictionaries alone.
 
-It sounds a bit complicated, right? First, search for the right resource dictionary, then remove it from the list of merged dictionaries, then load the new one, and apply it. Yes but what if it could be done jyst by setting one single value to one signle property, and all is OK?
+It sounds a bit complicated, right? First, search for the right resource dictionary, then remove it from the list of merged dictionaries, then load the new one, and apply it. Yes but what if it could be done jyst by setting one single value to one single property, and all is OK?
 
 ## The ThemeSelector class
 
-So there is it. The solution. I created a class which has an attachable property - the URI path to the desired theme dictionary. Now, let's think about finding the right dictionary to be removed when themes are being switched. Kinda obvious solution is a new class that inherits ResourceDictionary. Then, we search all merged dictionaries and remove those which are of this new type. Pretty simple, right? Here's the class: public class ThemeResourceDictionary : ResourceDictionary { }
+So there is it. The solution. I created a class which has an attachable property - the URI path to the desired theme dictionary. Now, let's think about finding the right dictionary to be removed when themes are being switched. Kinda obvious solution is a new class that inherits ResourceDictionary. Then, we search all merged dictionaries and remove those which are of this new type. Pretty simple, right? Here's the class: 
+
+```
+public class ThemeResourceDictionary : ResourceDictionary { }
+```
 
 So it's time to see the real deal. 
 
 ```
 public class MkThemeSelector : DependencyObject 
 { 
-    public static readonly DependencyProperty CurrentThemeDictionaryProperty = DependencyProperty.RegisterAttached("CurrentThemeDictionary", typeof(Uri), typeof(MkThemeSelector), new UIPropertyMetadata(null, CurrentThemeDictionaryChanged)); 
+    public static readonly DependencyProperty CurrentThemeDictionaryProperty =
+        DependencyProperty.RegisterAttached("CurrentThemeDictionary", 
+                                            typeof(Uri), 
+                                            typeof(MkThemeSelector), 
+                                            new UIPropertyMetadata(null, CurrentThemeDictionaryChanged)); 
     
-    public static Uri GetCurrentThemeDictionary(DependencyObject obj) { return (Uri)obj.GetValue(CurrentThemeDictionaryProperty); } 
-    public static void SetCurrentThemeDictionary(DependencyObject obj, Uri value) { obj.SetValue(CurrentThemeDictionaryProperty, value); } 
+    public static Uri GetCurrentThemeDictionary(DependencyObject obj) 
+    {
+        return (Uri)obj.GetValue(CurrentThemeDictionaryProperty); 
+    }
+     
+    public static void SetCurrentThemeDictionary(DependencyObject obj, Uri value)
+    {
+        obj.SetValue(CurrentThemeDictionaryProperty, value); 
+    } 
     
     private static void CurrentThemeDictionaryChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e) 
     {
@@ -67,6 +82,7 @@ public class MkThemeSelector : DependencyObject
     {
         if (targetElement == null)
             return;
+            
         try
         {
             ThemeResourceDictionary themeDictionary = null;
@@ -76,6 +92,7 @@ public class MkThemeSelector : DependencyObject
                 themeDictionary.Source = dictionaryUri; // add the new dictionary to the collection of merged dictionaries of the target object 
                 targetElement.Resources.MergedDictionaries.Insert(0, themeDictionary); 
             }
+            
             // find if the target element already has a theme applied 
             List existingDictionaries = (from dictionary in targetElement.Resources.MergedDictionaries.OfType() select dictionary).ToList();
             
