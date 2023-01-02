@@ -1,5 +1,5 @@
 {
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "RunTests": false,
   "NugetSource": "http://coriander:8081/repository/nuget-hosted",
   "NugetKeyCredentialsId": "Nexus-NuGet-API-Key",

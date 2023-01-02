@@ -5,12 +5,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <IncludeSymbols>True</IncludeSymbols>
+    <IncludeSymbols>False</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <UseWPF>true</UseWPF>
     <Copyright>Copyright © mk 2009</Copyright>
     <Company>mk</Company>
+    <DebugType>embedded</DebugType>
+    <RepositoryType>github</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>http://svetoslavsavov.blogspot.com/2009/07/switching-wpf-interface-themes-at.html</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/FineRedMist/wpf-theme-selector-dotnet</RepositoryUrl>
+    <Authors>Svetoslav Savov</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -22,5 +28,12 @@
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <NoWarn>1701;1702;NU1803</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
