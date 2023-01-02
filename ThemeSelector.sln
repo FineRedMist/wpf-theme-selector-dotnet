@@ -7,6 +7,33 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThemeSelector", "ThemeSelec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThemeSelectorSample", "ThemeSelectorSample\ThemeSelectorSample.csproj", "{B039C808-35AC-4783-B761-E65BA801569E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build Information", "Build Information", "{CDFDFB2F-E787-4654-88D9-E18AD6BE3251}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Configuration.json = Configuration.json
+		Jenkinsfile.groovy = Jenkinsfile.groovy
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{6F69FC70-F404-473C-BF30-DEE23FCC98CD}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\Documentation.html = Documentation\Documentation.html
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{12EE321D-9330-43EB-891E-B66A856CD868}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\Resources\screen1.png = Documentation\Resources\screen1.png
+		Documentation\Resources\screen2.png = Documentation\Resources\screen2.png
+		Documentation\Resources\screen3.png = Documentation\Resources\screen3.png
+		Documentation\Resources\screen4.png = Documentation\Resources\screen4.png
+		Documentation\Resources\screen5.png = Documentation\Resources\screen5.png
+		Documentation\Resources\screen6.png = Documentation\Resources\screen6.png
+		Documentation\Resources\screen7.png = Documentation\Resources\screen7.png
+		Documentation\Resources\screen8.png = Documentation\Resources\screen8.png
+		Documentation\Resources\screen9.png = Documentation\Resources\screen9.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +51,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{12EE321D-9330-43EB-891E-B66A856CD868} = {6F69FC70-F404-473C-BF30-DEE23FCC98CD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7CAB0A20-ADA3-4D10-9D78-A26F916A5EE9}
