@@ -44,7 +44,7 @@ namespace mkLibrary.ThemeSelector
         /// <summary>
         /// Sets the current theme dictionary <seealso cref="Uri"/> to <paramref name="value"/> for the provided <seealso cref="DependencyObject"/>.
         /// </summary>
-        public static void SetCurrentThemeDictionary(DependencyObject obj, Uri value)
+        public static void SetCurrentThemeDictionary(DependencyObject obj, Uri? value)
         {
             obj.SetValue(CurrentThemeDictionaryProperty, value);
         }
@@ -73,7 +73,7 @@ namespace mkLibrary.ThemeSelector
             }
             else if (obj is FrameworkElement) // works only on FrameworkElement objects
             {
-                ApplyTheme(obj as FrameworkElement, GetCurrentThemeDictionary(obj));
+                ApplyTheme((FrameworkElement)obj, GetCurrentThemeDictionary(obj));
             }
         }
 
@@ -107,12 +107,11 @@ namespace mkLibrary.ThemeSelector
             {
                 try
                 {
-                    ThemeResourceDictionary themeDictionary = null;
+                    ThemeResourceDictionary? themeDictionary = null;
                     if (dictionaryUri != null)
                     {
                         themeDictionary = new ThemeResourceDictionary();
                         themeDictionary.Source = dictionaryUri;
-
                     }
 
                     // Find if the target element already has a theme applied

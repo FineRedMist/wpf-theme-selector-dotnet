@@ -30,10 +30,16 @@ namespace ThemeSelector
         private void cmbThemes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (returnFromEventHandler) return;
-            Uri uri = null;
+            Uri? uri = null;
             if (cmbThemes.SelectedIndex > 0)
             {
-                uri = new Uri((cmbThemes.SelectedItem as ComboBoxItem).Tag.ToString(), UriKind.Relative);
+                var item = (ComboBoxItem)cmbThemes.SelectedItem;
+                var tag = item.Tag.ToString();
+                if(tag == null)
+                {
+                    return;
+                }
+                uri = new Uri(tag, UriKind.Relative);
             }
 
             returnFromEventHandler = true;
