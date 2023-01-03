@@ -17,6 +17,8 @@
     <PackageProjectUrl>http://svetoslavsavov.blogspot.com/2009/07/switching-wpf-interface-themes-at.html</PackageProjectUrl>
     <RepositoryUrl>https://github.com/FineRedMist/wpf-theme-selector-dotnet</RepositoryUrl>
     <Authors>Svetoslav Savov</Authors>
+    <Title>mkLibrary Theme Selector</Title>
+    <Description>A library for selecting different themes and applying them.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
